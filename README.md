@@ -2,9 +2,16 @@
 
 Provides alternative Phoenix generators (`phx.new` et al) that leverage [Dotenvy](https://hexdocs.pm/dotenvy/) for application configuration.
 
+The following generators are included:
+
+- `dot.new` a variant of the vanilla `mix new` command, but using `Dotenvy`
+- `phx.new.ecto`
+- `phx.new`
+- `phx.new.web`
+
 The Phoenix tasks are intended to *replace* any existing Phoenix installers (available as the `phx_new` archive).
 
-Based off version `1.8.0-dev` of the Phoenix installers.
+Based off version `1.7.18` of the Phoenix installers.
 
 This repo provides Mix tasks as an archive.
 
