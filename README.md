@@ -126,3 +126,7 @@ Update the `@version` attribute and some of the info so it's clear that this is 
         Mix.shell().info("Phoenix installer (Dotenvy) v#{@version}")
 
 We can delete the `local.phx.ex` task for now.
+
+To publish an updated version:
+
+        MIX_ENV=docs mix hex.publish
