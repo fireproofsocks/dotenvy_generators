@@ -4,15 +4,12 @@ defmodule Phx.New.Single do
   alias Phx.New.{Project}
 
   template(:new, [
-    {
-      :config,
-      :project,
-      "phx_single/config/config.exs": "config/config.exs",
-      "phx_single/config/dev.exs": "config/dev.exs",
-      "phx_single/config/prod.exs": "config/prod.exs",
-      "phx_single/config/runtime.exs": "config/runtime.exs",
-      "phx_single/config/test.exs": "config/test.exs"
-    },
+    {:config, :project,
+     "phx_single/config/config.exs": "config/config.exs",
+     "phx_single/config/dev.exs": "config/dev.exs",
+     "phx_single/config/prod.exs": "config/prod.exs",
+     "phx_single/config/runtime.exs": "config/runtime.exs",
+     "phx_single/config/test.exs": "config/test.exs"},
     {
       :eex,
       :project,

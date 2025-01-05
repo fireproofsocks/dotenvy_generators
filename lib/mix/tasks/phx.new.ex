@@ -117,7 +117,7 @@ defmodule Mix.Tasks.Phx.New do
   use Mix.Task
   alias Phx.New.{Generator, Project, Single, Umbrella, Web, Ecto}
 
-  @version Mix.Project.config()[:version]
+  @version Mix.Project.config()[:phoenix_version]
   @shortdoc "Creates a new Phoenix v#{@version} application using Dotenvy"
 
   @switches [
@@ -140,12 +140,13 @@ defmodule Mix.Tasks.Phx.New do
     install: :boolean,
     prefix: :string,
     mailer: :boolean,
-    adapter: :string
+    adapter: :string,
+    from_elixir_install: :boolean
   ]
 
   @impl true
   def run([version]) when version in ~w(-v --version) do
-    Mix.shell().info("Phoenix installer v#{@version}")
+    Mix.shell().info("Phoenix installer (Dotenvy) v#{@version}")
   end
 
   def run(argv) do
@@ -169,7 +170,7 @@ defmodule Mix.Tasks.Phx.New do
     elixir_version_check!()
 
     case OptionParser.parse!(argv, strict: @switches) do
-      {_opts, []} -> Mix.Tasks.Help.run(["phx.new.dotenvy"])
+      {_opts, []} -> Mix.Tasks.Help.run(["phx.new"])
       {opts, [base_path | _]} -> generate(base_path, generator, path, opts)
     end
   end
@@ -223,7 +224,9 @@ defmodule Mix.Tasks.Phx.New do
             Task.async(fn -> cmd(project, cmd, log: false, cd: project.web_path) end)
           end)
 
-        cmd(project, "mix deps.compile")
+        if rebar_available?() do
+          cmd(project, "mix deps.compile")
+        end
 
         Task.await_many(tasks, :infinity)
       end
@@ -252,11 +255,20 @@ defmodule Mix.Tasks.Phx.New do
   defp maybe_cd(path, func), do: path && File.cd!(path, func)
 
   defp install_mix(project, install?) do
-    if install? do
+    if install? && hex_available?() do
       cmd(project, "mix deps.get")
     else
       ["$ mix deps.get"]
     end
+  end
+
+  # TODO: Elixir v1.15 automatically installs Hex/Rebar if missing, so we can simplify this.
+  defp hex_available? do
+    Code.ensure_loaded?(Hex)
+  end
+
+  defp rebar_available? do
+    Mix.Rebar.rebar_cmd(:rebar3)
   end
 
   defp print_missing_steps(steps) do
@@ -329,7 +341,7 @@ defmodule Mix.Tasks.Phx.New do
   end
 
   defp check_app_name!(name, from_app_flag) do
-    unless name =~ Regex.recompile!(~r/^[a-z][a-z0-9_]*$/) do
+    unless name =~ Regex.recompile!(~r/^[a-z][\w_]*$/) do
       extra =
         if !from_app_flag do
           ". The application name is inferred from the path, if you'd like to " <>
@@ -378,9 +390,9 @@ defmodule Mix.Tasks.Phx.New do
   end
 
   defp elixir_version_check! do
-    unless Version.match?(System.version(), "~> 1.15") do
+    unless Version.match?(System.version(), "~> 1.14") do
       Mix.raise(
-        "Phoenix v#{@version} requires at least Elixir v1.15\n " <>
+        "Phoenix v#{@version} requires at least Elixir v1.14\n " <>
           "You have #{System.version()}. Please update accordingly"
       )
     end

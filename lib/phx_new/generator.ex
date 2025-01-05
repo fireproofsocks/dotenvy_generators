@@ -178,6 +178,7 @@ defmodule Phx.New.Generator do
     tailwind = Keyword.get(opts, :tailwind, assets)
     mailer = Keyword.get(opts, :mailer, true)
     dev = Keyword.get(opts, :dev, false)
+    from_elixir_install = Keyword.get(opts, :from_elixir_install, false)
     phoenix_path = phoenix_path(project, dev, false)
     phoenix_path_umbrella_root = phoenix_path(project, dev, true)
 
@@ -239,10 +240,31 @@ defmodule Phx.New.Generator do
       web_adapter_docs: web_adapter_docs,
       generators: nil_if_empty(project.generators ++ adapter_generators(adapter_config)),
       namespaced?: namespaced?(project),
-      dev: dev
+      dev: dev,
+      from_elixir_install: from_elixir_install,
+      elixir_install_otp_bin_path: from_elixir_install && elixir_install_otp_bin_path(),
+      elixir_install_bin_path: from_elixir_install && elixir_install_bin_path()
     ]
 
     %Project{project | binding: binding}
+  end
+
+  def elixir_install_otp_bin_path do
+    "erl"
+    |> System.find_executable()
+    |> Path.split()
+    |> Enum.drop(-1)
+    |> Path.join()
+    |> Path.relative_to(System.user_home())
+  end
+
+  def elixir_install_bin_path do
+    "elixir"
+    |> System.find_executable()
+    |> Path.split()
+    |> Enum.drop(-1)
+    |> Path.join()
+    |> Path.relative_to(System.user_home())
   end
 
   defp namespaced?(project) do
@@ -389,8 +411,6 @@ defmodule Phx.New.Generator do
       # ssl: true,
       url: database_url,
       pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-      # For machines with several cores, consider starting multiple pools of `pool_size`
-      # pool_count: 4,
       socket_options: maybe_ipv6
       """
     ]

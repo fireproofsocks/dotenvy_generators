@@ -9,12 +9,11 @@ defmodule <%= @app_module %>.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",<% end %>
-      elixir: "~> 1.15",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      listeners: [Phoenix.CodeReloader],
       releases: releases()
     ]
   end
@@ -64,15 +63,15 @@ defmodule <%= @app_module %>.MixProject do
        app: false,
        compile: false,
        depth: 1},<% end %><%= if @mailer do %>
-      {:swoosh, "~> 1.16"},
-      {:req, "~> 0.5.4"},<% end %>
+      {:swoosh, "~> 1.5"},
+      {:finch, "~> 0.13"},<% end %>
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},<%= if @gettext do %>
       {:gettext, "~> 0.26"},<% end %>
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {<%= inspect @web_adapter_app %>, "<%= @web_adapter_vsn %>"},
-      {:dotenvy, "~> 0.9.0"}
+      {:dotenvy, "~> 0.9.0"},
+      {<%= inspect @web_adapter_app %>, "<%= @web_adapter_vsn %>"}
     ]
   end
 
