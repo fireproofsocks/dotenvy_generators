@@ -15,6 +15,7 @@ defmodule DotenvyGenerators.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
+      preferred_cli_env: [docs: :docs],
       docs: [
         source_ref: "v#{@version}",
         source_url: @source_url,
@@ -26,7 +27,7 @@ defmodule DotenvyGenerators.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:eex, :crypto]
     ]
   end
 
@@ -57,13 +58,7 @@ defmodule DotenvyGenerators.MixProject do
       licenses: ["Apache-2.0"],
       logo: "assets/logo.png",
       links: links(),
-      files: [
-        "lib",
-        "mix.exs",
-        "README*",
-        "CHANGELOG*",
-        "LICENSE*"
-      ]
+      files: ~w(lib templates mix.exs README.md)
     ]
   end
 end
