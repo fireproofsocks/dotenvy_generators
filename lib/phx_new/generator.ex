@@ -292,12 +292,12 @@ defmodule Phx.New.Generator do
     config :#{binding[:app_name]}, #{binding[:app_module]}.Repo#{kw_to_config(adapter_config[:test])}
     """)
 
-    prod_only_config_inject(project_path, "config/runtime.exs", """
-    #{adapter_config[:prod_variables]}
+    # prod_only_config_inject(project_path, "config/runtime.exs", """
+    # #{adapter_config[:prod_variables]}
 
-    config :#{binding[:app_name]}, #{binding[:app_module]}.Repo,
-      #{adapter_config[:prod_config]}
-    """)
+    # config :#{binding[:app_name]}, #{binding[:app_module]}.Repo,
+    #   #{adapter_config[:prod_config]}
+    # """)
   end
 
   defp get_pubsub_server(module) do
@@ -357,18 +357,18 @@ defmodule Phx.New.Generator do
           pid = Ecto.Adapters.SQL.Sandbox.start_owner!(#{inspect(module)}.Repo, shared: not tags[:async])
           on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)\
       """,
-      prod_variables: """
-      database_path =
-        System.get_env("DATABASE_PATH") ||
-          raise \"""
-          environment variable DATABASE_PATH is missing.
-          For example: /etc/#{app}/#{app}.db
-          \"""
-      """,
-      prod_config: """
-      database: database_path,
-      pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
-      """
+      # prod_variables: """
+      # database_path =
+      #   System.get_env("DATABASE_PATH") ||
+      #     raise \"""
+      #     environment variable DATABASE_PATH is missing.
+      #     For example: /etc/#{app}/#{app}.db
+      #     \"""
+      # """,
+      # prod_config: """
+      # database: database_path,
+      # pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+      # """
     ]
   end
 

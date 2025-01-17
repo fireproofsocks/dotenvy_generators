@@ -6,7 +6,8 @@ defmodule Phx.New.Web do
   @pre "phx_umbrella/apps/app_name_web"
 
   template(:new, [
-    {:prod_config, :project, "#{@pre}/config/runtime.exs": "config/runtime.exs"},
+    # {:prod_config, :project, "#{@pre}/config/runtime.exs": "config/runtime.exs"},
+    {:config, :project, "#{@pre}/config/runtime.exs": "config/runtime.exs"},
     {:config, :project,
      "#{@pre}/config/config.exs": "config/config.exs",
      "#{@pre}/config/dev.exs": "config/dev.exs",

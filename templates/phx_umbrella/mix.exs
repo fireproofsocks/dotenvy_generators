@@ -7,7 +7,8 @@ defmodule <%= @root_app_module %>.MixProject do
       version: "0.1.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      releases: releases()
     ]
   end
 
@@ -30,6 +31,14 @@ defmodule <%= @root_app_module %>.MixProject do
       {:phoenix_live_view, ">= 0.0.0"}
     ]<% else %>
     []<% end %>
+  end
+
+  defp releases do
+    [
+      <%= @app_name %>: [
+        overlays: ["envs/"]
+      ]
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
