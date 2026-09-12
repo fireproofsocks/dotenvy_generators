@@ -37,6 +37,7 @@ defmodule <%= @app_module %>.MixProject do
   defp deps do
     [
       {:dns_cluster, "~> 0.1.1"},
+      {:dotenvy, "~> 1.2"},
       {:phoenix_pubsub, "~> 2.1"}<%= if @ecto do %>,
       {:ecto_sql, "~> 3.10"},
       {:<%= @adapter_app %>, ">= 0.0.0"},

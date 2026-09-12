@@ -23,6 +23,21 @@ Fixes in the generated `config/runtime.exs`:
 - Renames `PHX_PLUGIN_INIT_MODE` to `PHX_PLUG_INIT_MODE` to match the
   `:plug_init_mode` key it sets, in both the runtime config and the env files.
 
+Umbrella generator (`phx.new --umbrella`, `phx.new.web`):
+
+- The umbrella path did not use `Dotenvy` at all. It generated stock Phoenix
+  config: no `envs/` directory, no `dotenvy` dependency, and a `config/runtime.exs`
+  whose entire contents sat inside `if config_env() == :prod do`.
+- Adds `envs/.env`, `.dev.env`, `.test.env` and `.prod.env` templates and the
+  `{:dotenvy, "~> 1.2"}` dependency.
+- Rewrites both umbrella runtime templates to read values with `env!`, with no
+  `config_env()` branching. `config_env()` is still used to select which env
+  file to read, which is the intended pattern.
+- The web app's runtime config is now registered as `:config` rather than
+  `:prod_config`, so it is no longer injected into a prod-only block.
+- Adds the `.overrides.env` line to both the single and umbrella `.gitignore`
+  templates, which the README called for but neither had.
+
 Other:
 
 - Replaces the deprecated `:preferred_cli_env` with `def cli`.

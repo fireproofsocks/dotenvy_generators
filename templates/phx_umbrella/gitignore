@@ -27,3 +27,6 @@ erl_crash.dump
 *.db
 *.db-*
 <% end %>
+
+# Ignore custom overrides of .env files
+.overrides.env
