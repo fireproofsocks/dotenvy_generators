@@ -14,7 +14,7 @@ source!([
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
-# system starts Do not define any compile-time configuration in here,
+# system starts. Do not define any compile-time configuration in here,
 # as it won't be applied.
 
 # ## Using releases
@@ -22,7 +22,7 @@ source!([
 # If you use `mix release`, you need to explicitly enable the server
 # by passing the PHX_SERVER=true when you start it:
 #
-#     PHX_SERVER=true bin/src_me start
+#     PHX_SERVER=true bin/<%= @app_name %> start
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
@@ -32,21 +32,12 @@ end
 
 # Initialize plugs at runtime for faster development compilation
 # values can be :runtime or :compile; must be :compile in prod (the default)
-config :phoenix, :plug_init_mode, env!("PHX_PLUGIN_INIT_MODE", :existing_atom!)
+config :phoenix, :plug_init_mode, env!("PHX_PLUG_INIT_MODE", :existing_atom!)
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-ip =
-  env!("HTTP_INTERFACE", fn val ->
-    with [_] <- String.split(val, "."),
-         [_] <- String.split(val, ":") do
-      raise "Invalid IP address specified"
-    else
-      parts -> parts |> Enum.map(&String.to_integer/1) |> List.to_tuple()
-    end
-  end)
-
+<%= if @ecto do %>
 ecto_socket_options = if env!("ECTO_IPV6", :boolean!), do: [:inet6], else: []
 
 config :<%= @app_name %>, <%= @app_module %>.Repo,
@@ -58,6 +49,7 @@ config :<%= @app_name %>, <%= @app_module %>.Repo,
   stacktrace: env!("ECTO_STACKTRACE", :boolean),
   show_sensitive_data_on_connection_error:
     env!("SHOW_SENSITIVE_DATA_ON_CONNECTION_ERROR", :boolean)
+<% end %>
 
 if env!("ENABLE_DISTRIBUTED_MODE", :boolean) do
   config :<%= @app_name %>, :dns_cluster_query, env!("DNS_CLUSTER_QUERY", :string)
@@ -66,7 +58,7 @@ end
 config :<%= @app_name %>, <%= @endpoint_module %>,
   cache_static_manifest: env!("PHX_CACHE_STATIC_MANIFEST", :string?),
   check_origin: env!("HTTP_CHECK_ORIGIN", :boolean),
-  http: [ip: ip, port: env!("PORT", :integer!)],
+  http: [ip: env!("HTTP_INTERFACE", :ip!), port: env!("PORT", :integer!)],
   secret_key_base: env!("SECRET_KEY_BASE", :string!),
   # Used to build URLs
   url: [
@@ -128,13 +120,14 @@ config :<%= @app_name %>, <%= @endpoint_module %>,
 # configured to run both http and https servers on
 # different ports.
 
+<%= if @mailer do %>
 # ## Configuring the mailer
 #
 # In production you need to configure the mailer to use a different adapter.
 # Also, you may need to configure the Swoosh API client of your choice if you
 # are not using SMTP. Here is an example of the configuration:
 #
-#     config :src_me, SrcMe.Mailer,
+#     config :<%= @app_name %>, <%= @app_module %>.Mailer,
 #       adapter: Swoosh.Adapters.Mailgun,
 #       api_key: System.get_env("MAILGUN_API_KEY"),
 #       domain: System.get_env("MAILGUN_DOMAIN")
@@ -146,12 +139,17 @@ config :<%= @app_name %>, <%= @endpoint_module %>,
 #
 # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 # Configures Swoosh API Client
+#
+# SWOOSH_API_CLIENT is read twice: as a boolean it acts as an on/off switch
+# (set it to "false" to disable), and as a module it names the client to use.
 if env!("SWOOSH_API_CLIENT", :boolean) do
-  config :swoosh, api_client: env!("SWOOSH_API_CLIENT", :module!), finch_name: SrcMe.Finch
+  config :swoosh,
+    api_client: env!("SWOOSH_API_CLIENT", :module!),
+    finch_name: <%= @app_module %>.Finch
 else
   config :swoosh, api_client: false
 end
 
 config :<%= @app_name %>, <%= @app_module %>.Mailer, adapter: env!("SWOOSH_MAILER_ADAPTER", :module)
-config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: SrcMe.Finch
 config :swoosh, local: env!("SWOOSH_LOCAL_MEMORY_STORAGE", :boolean)
+<% end %>

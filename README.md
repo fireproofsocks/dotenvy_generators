@@ -104,7 +104,7 @@ Update the `templates/phx_single/mix.exs` so it includes overlays in its release
 
 and ensure the latest `dotenvy` in the dependencies, e.g.
 
-        {:dotenvy, "~> 0.9.0"}
+        {:dotenvy, "~> 1.2"}
 
 The `templates/phx_single/gitignore` file should include a line to ignore `.overrides.env`:
 

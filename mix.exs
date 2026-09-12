@@ -2,7 +2,7 @@ defmodule DotenvyGenerators.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/fireproofsocks/dotenvy_generators"
-  @version "0.9.0"
+  @version "1.2.0"
 
   def project do
     [
@@ -15,13 +15,16 @@ defmodule DotenvyGenerators.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
-      preferred_cli_env: [docs: :docs],
       docs: [
         source_ref: "v#{@version}",
         source_url: @source_url,
         extras: extras()
       ]
     ]
+  end
+
+  def cli do
+    [preferred_envs: [docs: :docs]]
   end
 
   # Run "mix help compile.app" to learn about applications.
@@ -56,9 +59,8 @@ defmodule DotenvyGenerators.MixProject do
     [
       maintainers: ["Everett Griffiths"],
       licenses: ["Apache-2.0"],
-      logo: "assets/logo.png",
       links: links(),
-      files: ~w(lib templates mix.exs README.md)
+      files: ~w(lib templates mix.exs README.md CHANGELOG.md LICENSE)
     ]
   end
 end
