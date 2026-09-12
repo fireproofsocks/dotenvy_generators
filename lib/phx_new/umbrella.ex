@@ -14,6 +14,14 @@ defmodule Phx.New.Umbrella do
      "phx_umbrella/mix.exs": "mix.exs",
      "phx_umbrella/README.md": "README.md",
      "phx_umbrella/formatter.exs": ".formatter.exs"},
+    {
+      :eex,
+      :project,
+      "phx_umbrella/envs/.env": "envs/.env",
+      "phx_umbrella/envs/.dev.env": "envs/.dev.env",
+      "phx_umbrella/envs/.test.env": "envs/.test.env",
+      "phx_umbrella/envs/.prod.env": "envs/.prod.env"
+    },
     {:config, :project, "phx_umbrella/config/extra_config.exs": "config/config.exs"}
   ])
 
